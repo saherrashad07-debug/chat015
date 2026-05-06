@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Private Chat</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0f0f14">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0f0f14;
+            --bg-card: #18181f;
+            --bg-input: #1e1e28;
+            --text-main: #f0eef6;
+            --text-muted: #8a8a9a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; height: 100dvh; overflow: hidden; }
+        
+        .screen { display: none; flex-direction: column; height: 100%; }
+        .screen.active { display: flex; }
+
+        /* === Login Screen === */
+        #login-screen {
+            justify-content: center; align-items: center; padding: 20px;
+            background: radial-gradient(circle at center, #1a1a2e, var(--bg-main) 80%);
+        }
+        .login-card { text-align: center; padding: 40px 20px; width: 100%; max-width: 400px; }
+        .login-card h1 { font-size: 28px; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 1px; }
+        .login-card p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 40px; }
+        
+        .user-btn {
+            display: block; width: 100%; padding: 20px; margin-bottom: 20px;
+            border: 2px solid transparent; border-radius: 20px;
+            font-size: 18px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.5px;
+        }
+        .user-btn:active { transform: scale(0.98); }
+        
+        .btn-saher { background: rgba(125, 92, 191, 0.15); color: #9d7aea; border-color: #9d7aea; }
+        .btn-salma { background: rgba(219, 39, 119, 0.15); color: #f472b6; border-color: #f472b6; }
+
+        /* === Chat Screen === */
+        .chat-header {
+            background: var(--bg-card); padding: 18px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .header-info h3 { font-size: 17px; font-weight: 600; }
+        .header-info span { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px;}
+        .header-info span::before { content: ''; width: 7px; height: 7px; background: #00e676; border-radius: 50%; display: inline-block; }
+        
+        .logout-btn { background: none; border: 1px solid #444; color: #888; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: 'Poppins'; font-size: 12px; transition: 0.3s; }
+        .logout-btn:active { background: #222; }
+
+        #chat-messages {
+            flex: 1; padding: 20px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .message {
+            max-width: 78%; padding: 12px 18px; border-radius: 20px;
+            font-size: 14px; line-height: 1.6; animation: popIn 0.3s ease;
+        }
+        @keyframes popIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Saher Bubbles */
+        .message.saher-sent { align-self: flex-end; background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); color: white; border-bottom-right-radius: 6px; }
+        .message.saher-received { align-self: flex-start; background: #222230; color: var(--text-main); border-bottom-left-radius: 6px; }
+
+        /* Salma Bubbles */
+        .message.salma-sent { align-self: flex-end; background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); color: white; border-bottom-right-radius: 6px; }
+        .message.salma-received { align-self: flex-start; background: #222230; color: var(--text-main); border-bottom-left-radius: 6px; }
+
+        .chat-footer {
+            padding: 15px 20px; background: var(--bg-card);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex; gap: 15px; align-items: center;
+        }
+        .chat-footer input {
+            flex: 1; background: var(--bg-input); border: none; border-radius: 25px;
+            padding: 16px 25px; color: var(--text-main); font-size: 14px; outline: none;
+            font-family: 'Poppins', sans-serif;
+        }
+        .send-btn {
+            width: 52px; height: 52px; border-radius: 50%; border: none; color: white;
+            font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .send-btn.saher-btn { background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); box-shadow: 0 5px 15px rgba(125, 92, 191, 0.3); }
+        .send-btn.salma-btn { background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); box-shadow: 0 5px 15px rgba(219, 39, 119, 0.3); }
+        .send-btn:active { transform: scale(0.9); }
+        #chat-messages::-webkit-scrollbar { width: 0; }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active">
+        <div class="login-card">
+            <h1>Who are you? 💬</h1>
+            <p class="subtitle">Select your profile to start</p>
+            <button class="user-btn btn-saher" onclick="loginAs('Saher')">Continue as Saher 🌙</button>
+            <button class="user-btn btn-salma" onclick="loginAs('Salma')">Continue as Salma 🦋</button>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="screen">
+        <div class="chat-header">
+            <div class="header-info">
+                <h3 id="header-title">Private Chat</h3>
+                <span>Cloud Synced</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        
+        <div id="chat-messages"></div>
+
+        <div class="chat-footer">
+            <input type="text" id="msg-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script>
+        let currentUser = '';
+        let messagesRef;
+
+        // كودات الفايربيس بتاعتك (مظبوطة وجاهزة)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDUh6YBeCQLva-AisywxtmOzSe_dk4uDSE",
+            authDomain: "my-chat-f2a2d.firebaseapp.com",
+            databaseURL: "https://my-chat-f2a2d-default-rtdb.firebaseio.com",
+            projectId: "my-chat-f2a2d",
+            storageBucket: "my-chat-f2a2d.firebasestorage.app",
+            messagingSenderId: "394708901828",
+            appId: "1:394708901828:web:e7460d8117d2b7b11cce91"
+        };
+
+        // تهيئة الاتصال
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        function loginAs(user) {
+            currentUser = user;
+            messagesRef = database.ref('messages');
+            
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('chat-screen').classList.add('active');
+            document.getElementById('header-title').innerText = `${user}'s Chat`;
+
+            if(user === 'Saher') {
+                document.getElementById('send-btn').classList.add('saher-btn');
+            } else {
+                document.getElementById('send-btn').classList.add('salma-btn');
+            }
+
+            loadMessages();
+        }
+
+        function logout() {
+            if(messagesRef) messagesRef.off();
+            document.getElementById('chat-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+            document.getElementById('chat-messages').innerHTML = '';
+            document.getElementById('send-btn').className = 'send-btn';
+        }
+
+        function loadMessages() {
+            messagesRef.orderByChild('timestamp').on('child_added', (snapshot) => {
+                const data = snapshot.val();
+                appendMessage(data.sender, data.text);
+            });
+        }
+
+        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+        function sendMessage() {
+            const input = document.getElementById('msg-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            messagesRef.push({
+                sender: currentUser,
+                text: text,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+
+            input.value = '';
+        }
+
+        function appendMessage(sender, text) {
+            const chatBox = document.getElementById('chat-messages');
+            const div = document.createElement('div');
+            
+            let msgClass = '';
+            if (sender === 'Saher') {
+                msgClass = (currentUser === 'Saher') ? 'message saher-sent' : 'message saher-received';
+            } else {
+                msgClass = (currentUser === 'Salma') ? 'message salma-sent' : 'message salma-received';
+            }
+
+            div.className = msgClass;
+            div.textContent = text;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
