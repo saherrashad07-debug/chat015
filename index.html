@@ -6,16 +6,16 @@
     <title>Private Chat</title>
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0f0f14">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#121318">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-main: #0f0f14;
-            --bg-card: #18181f;
-            --bg-input: #1e1e28;
-            --text-main: #f0eef6;
-            --text-muted: #8a8a9a;
+            --bg-main: #121318;
+            --bg-card: rgba(30, 31, 38, 0.9);
+            --bg-input: #252530;
+            --text-main: #eaeaea;
+            --text-muted: #8a8a9e;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -24,100 +24,130 @@
         .screen { display: none; flex-direction: column; height: 100%; }
         .screen.active { display: flex; }
 
-        /* === Login Screen === */
         #login-screen {
             justify-content: center; align-items: center; padding: 20px;
-            background: radial-gradient(circle at center, #1a1a2e, var(--bg-main) 80%);
+            background: radial-gradient(circle at top right, #1f1f30 0%, var(--bg-main) 60%),
+                        radial-gradient(circle at bottom left, #2a1525 0%, transparent 50%);
         }
-        .login-card { text-align: center; padding: 40px 20px; width: 100%; max-width: 400px; }
-        .login-card h1 { font-size: 28px; font-weight: 700; margin-bottom: 10px; color: #fff; letter-spacing: 1px; }
-        .login-card p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 40px; }
+        .login-card { text-align: center; padding: 50px 25px; width: 100%; max-width: 400px; }
+        .login-card h1 { font-size: 30px; font-weight: 700; margin-bottom: 8px; color: #fff; letter-spacing: 1px; }
+        .login-card p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 45px; font-weight: 300; }
         
         .user-btn {
-            display: block; width: 100%; padding: 20px; margin-bottom: 20px;
-            border: 2px solid transparent; border-radius: 20px;
-            font-size: 18px; font-weight: 600; cursor: pointer;
-            transition: all 0.3s; font-family: 'Poppins', sans-serif;
-            letter-spacing: 0.5px;
+            display: block; width: 100%; padding: 22px; margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
+            font-size: 17px; font-weight: 500; cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            font-family: 'Poppins', sans-serif;
+            background: rgba(255,255,255,0.03); backdrop-filter: blur(10px); color: #fff;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
         }
-        .user-btn:active { transform: scale(0.98); }
-        
-        .btn-saher { background: rgba(125, 92, 191, 0.15); color: #9d7aea; border-color: #9d7aea; }
-        .btn-salma { background: rgba(219, 39, 119, 0.15); color: #f472b6; border-color: #f472b6; }
+        .user-btn:active { transform: scale(0.97); }
+        .user-btn .btn-icon { font-size: 28px; }
+        .btn-saher:hover, .btn-saher:active { border-color: #9d7aea; box-shadow: 0 0 25px rgba(157, 122, 234, 0.15); }
+        .btn-salma:hover, .btn-salma:active { border-color: #f472b6; box-shadow: 0 0 25px rgba(244, 114, 182, 0.15); }
 
-        /* === Chat Screen === */
+        #chat-screen { background: var(--bg-main); position: relative; }
+        #chat-screen::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(157, 122, 234, 0.03) 0%, transparent 50%);
+            z-index: 0; pointer-events: none;
+        }
+
         .chat-header {
-            background: var(--bg-card); padding: 18px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: var(--bg-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 20px; display: flex; align-items: center; gap: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 2;
+        }
+        .header-avatar {
+            width: 45px; height: 45px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 22px;
         }
         .header-info h3 { font-size: 17px; font-weight: 600; }
-        .header-info span { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px;}
-        .header-info span::before { content: ''; width: 7px; height: 7px; background: #00e676; border-radius: 50%; display: inline-block; }
+        .header-info span { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; font-weight: 400;}
+        .online-dot { width: 8px; height: 8px; background: #00e676; border-radius: 50%; box-shadow: 0 0 8px rgba(0, 230, 118, 0.6); }
         
-        .logout-btn { background: none; border: 1px solid #444; color: #888; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: 'Poppins'; font-size: 12px; transition: 0.3s; }
-        .logout-btn:active { background: #222; }
-
-        #chat-messages {
-            flex: 1; padding: 20px; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 10px;
+        .logout-btn { 
+            margin-right: auto; background: none; border: 1px solid rgba(255,255,255,0.1); 
+            color: #888; padding: 8px 12px; border-radius: 12px; cursor: pointer; 
+            font-family: 'Poppins'; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; transition: 0.3s;
         }
+        .logout-btn:active { background: rgba(255,255,255,0.05); }
+
+        #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; z-index: 1; }
 
         .message {
-            max-width: 78%; padding: 12px 18px; border-radius: 20px;
-            font-size: 14px; line-height: 1.6; animation: popIn 0.3s ease;
+            max-width: 80%; padding: 12px 16px; border-radius: 22px;
+            font-size: 14px; line-height: 1.5; animation: popIn 0.3s ease; position: relative;
         }
-        @keyframes popIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        /* Saher Bubbles */
-        .message.saher-sent { align-self: flex-end; background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); color: white; border-bottom-right-radius: 6px; }
-        .message.saher-received { align-self: flex-start; background: #222230; color: var(--text-main); border-bottom-left-radius: 6px; }
+        .message.saher-sent { align-self: flex-end; background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); color: white; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(125, 92, 191, 0.2); }
+        .message.saher-received { align-self: flex-start; background: #1e1e28; color: var(--text-main); border-bottom-left-radius: 6px; border: 1px solid rgba(255,255,255,0.04); }
 
-        /* Salma Bubbles */
-        .message.salma-sent { align-self: flex-end; background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); color: white; border-bottom-right-radius: 6px; }
-        .message.salma-received { align-self: flex-start; background: #222230; color: var(--text-main); border-bottom-left-radius: 6px; }
+        .message.salma-sent { align-self: flex-end; background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); color: white; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(219, 39, 119, 0.2); }
+        .message.salma-received { align-self: flex-start; background: #1e1e28; color: var(--text-main); border-bottom-left-radius: 6px; border: 1px solid rgba(255,255,255,0.04); }
+
+        .message-container { display: flex; flex-direction: column; max-width: 100%; }
+        .message.saher-sent .message-container, .message.salma-sent .message-container { align-items: flex-end; }
+        .message.saher-received .message-container, .message.salma-received .message-container { align-items: flex-start; }
+        
+        .message-text { word-wrap: break-word; padding-bottom: 2px; }
+        
+        .message-meta { display: flex; align-items: center; gap: 4px; margin-top: 1px; }
+        .message-meta .time { font-size: 10px; opacity: 0.6; font-weight: 400; }
+        
+        .checkmark { font-size: 14px; margin-right: 2px; color: rgba(255,255,255,0.4); font-weight: bold; }
+        .checkmark.read { color: #53bdeb; }
 
         .chat-footer {
             padding: 15px 20px; background: var(--bg-card);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border-top: 1px solid rgba(255,255,255,0.05);
-            display: flex; gap: 15px; align-items: center;
+            display: flex; gap: 12px; align-items: center; z-index: 2;
         }
         .chat-footer input {
-            flex: 1; background: var(--bg-input); border: none; border-radius: 25px;
-            padding: 16px 25px; color: var(--text-main); font-size: 14px; outline: none;
-            font-family: 'Poppins', sans-serif;
+            flex: 1; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 30px; padding: 16px 25px; color: var(--text-main); font-size: 14px; 
+            outline: none; font-family: 'Poppins', sans-serif; transition: 0.3s;
         }
+        .chat-footer input:focus { border-color: rgba(255,255,255,0.15); background: #2a2a38; }
+        
         .send-btn {
             width: 52px; height: 52px; border-radius: 50%; border: none; color: white;
             font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
+            transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .send-btn.saher-btn { background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); box-shadow: 0 5px 15px rgba(125, 92, 191, 0.3); }
-        .send-btn.salma-btn { background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); box-shadow: 0 5px 15px rgba(219, 39, 119, 0.3); }
-        .send-btn:active { transform: scale(0.9); }
+        .send-btn.saher-btn { background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); }
+        .send-btn.salma-btn { background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); }
+        .send-btn:active { transform: scale(0.92); }
+        
         #chat-messages::-webkit-scrollbar { width: 0; }
     </style>
 </head>
 <body>
 
-    <!-- Login Screen -->
     <div id="login-screen" class="screen active">
         <div class="login-card">
-            <h1>Who are you? 💬</h1>
-            <p class="subtitle">Select your profile to start</p>
-            <button class="user-btn btn-saher" onclick="loginAs('Saher')">Continue as Saher 🌙</button>
-            <button class="user-btn btn-salma" onclick="loginAs('Salma')">Continue as Salma 🦋</button>
+            <h1>Welcome Back 💎</h1>
+            <p class="subtitle">Select your identity to continue</p>
+            <button class="user-btn btn-saher" onclick="loginAs('Saher')">
+                <span class="btn-icon">🌙</span> Continue as Saher
+            </button>
+            <button class="user-btn btn-salma" onclick="loginAs('Salma')">
+                <span class="btn-icon">🦋</span> Continue as Salma
+            </button>
         </div>
     </div>
 
-    <!-- Chat Screen -->
     <div id="chat-screen" class="screen">
         <div class="chat-header">
+            <div class="header-avatar" id="header-avatar">🦋</div>
             <div class="header-info">
-                <h3 id="header-title">Private Chat</h3>
-                <span>Cloud Synced</span>
+                <h3 id="header-name">Salma</h3>
+                <span><div class="online-dot"></div> Online</span>
             </div>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <button class="logout-btn" onclick="logout()">LOGOUT</button>
         </div>
         
         <div id="chat-messages"></div>
@@ -128,15 +158,15 @@
         </div>
     </div>
 
-    <!-- Firebase Scripts -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
         let currentUser = '';
+        let otherUser = '';
         let messagesRef;
+        let otherUserLastRead = 0;
 
-        // كودات الفايربيس بتاعتك (مظبوطة وجاهزة)
         const firebaseConfig = {
             apiKey: "AIzaSyDUh6YBeCQLva-AisywxtmOzSe_dk4uDSE",
             authDomain: "my-chat-f2a2d.firebaseapp.com",
@@ -147,23 +177,28 @@
             appId: "1:394708901828:web:e7460d8117d2b7b11cce91"
         };
 
-        // تهيئة الاتصال
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
         function loginAs(user) {
             currentUser = user;
+            otherUser = (user === 'Saher') ? 'Salma' : 'Saher';
             messagesRef = database.ref('messages');
             
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('chat-screen').classList.add('active');
-            document.getElementById('header-title').innerText = `${user}'s Chat`;
+            
+            document.getElementById('header-name').innerText = otherUser;
+            document.getElementById('header-avatar').innerText = (otherUser === 'Salma') ? '🦋' : '🌙';
 
-            if(user === 'Saher') {
-                document.getElementById('send-btn').classList.add('saher-btn');
-            } else {
-                document.getElementById('send-btn').classList.add('salma-btn');
-            }
+            if(user === 'Saher') { document.getElementById('send-btn').classList.add('saher-btn'); } 
+            else { document.getElementById('send-btn').classList.add('salma-btn'); }
+
+            database.ref('lastRead/' + currentUser).set(firebase.database.ServerValue.TIMESTAMP);
+            database.ref('lastRead/' + otherUser).on('value', (snapshot) => {
+                otherUserLastRead = snapshot.val() || 0;
+                updateCheckmarks();
+            });
 
             loadMessages();
         }
@@ -179,7 +214,11 @@
         function loadMessages() {
             messagesRef.orderByChild('timestamp').on('child_added', (snapshot) => {
                 const data = snapshot.val();
-                appendMessage(data.sender, data.text);
+                const msgId = snapshot.key;
+                if (data.sender !== currentUser) {
+                    database.ref('lastRead/' + currentUser).set(firebase.database.ServerValue.TIMESTAMP);
+                }
+                appendMessage(data.sender, data.text, msgId, data.timestamp);
             });
         }
 
@@ -199,7 +238,12 @@
             input.value = '';
         }
 
-        function appendMessage(sender, text) {
+        function formatTime(timestamp) {
+            if(!timestamp) return '';
+            return new Date(timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        }
+
+        function appendMessage(sender, text, msgId, timestamp) {
             const chatBox = document.getElementById('chat-messages');
             const div = document.createElement('div');
             
@@ -211,9 +255,42 @@
             }
 
             div.className = msgClass;
-            div.textContent = text;
+            div.dataset.id = msgId;
+            div.dataset.timestamp = timestamp;
+
+            let isSent = msgClass.includes('sent');
+            let isRead = isSent && (timestamp <= otherUserLastRead);
+            let checkmarkHtml = isSent ? `<span class="checkmark ${isRead ? 'read' : ''}">${isRead ? '✓✓' : '✓'}</span>` : '';
+
+            div.innerHTML = `
+                <div class="message-container">
+                    <span class="message-text">${text}</span>
+                    <div class="message-meta">
+                        <span class="time">${formatTime(timestamp)}</span>
+                        ${checkmarkHtml}
+                    </div>
+                </div>
+            `;
+            
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function updateCheckmarks() {
+            const sentMessages = document.querySelectorAll('.message.saher-sent, .message.salma-sent');
+            sentMessages.forEach(msgDiv => {
+                let msgTime = parseInt(msgDiv.dataset.timestamp);
+                let checkEl = msgDiv.querySelector('.checkmark');
+                if (checkEl) {
+                    if (msgTime <= otherUserLastRead) {
+                        checkEl.classList.add('read');
+                        checkEl.innerText = '✓✓';
+                    } else {
+                        checkEl.classList.remove('read');
+                        checkEl.innerText = '✓';
+                    }
+                }
+            });
         }
     </script>
 </body>
