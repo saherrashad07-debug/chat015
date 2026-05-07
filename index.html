@@ -19,7 +19,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; height: 100dvh; overflow: hidden; }
+        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; height: 100dvh; overflow: hidden; user-select: none; }
         
         .screen { display: none; flex-direction: column; height: 100%; }
         .screen.active { display: flex; }
@@ -76,29 +76,64 @@
 
         #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; z-index: 1; }
 
+        .message-wrapper {
+            position: relative; overflow: hidden; border-radius: 22px;
+            max-width: 80%; align-self: flex-start; touch-action: pan-y;
+        }
+        .message-wrapper.sent-wrapper { align-self: flex-end; }
+
+        .reply-action-bg {
+            position: absolute; top: 0; bottom: 0; left: 0; width: 100%;
+            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: flex-start;
+            padding-left: 20px; border-radius: 22px;
+        }
+        .reply-action-bg span { font-size: 24px; opacity: 0; transition: opacity 0.1s; color: #9d7aea; }
+        .message-wrapper.swiping .reply-action-bg span { opacity: 1; }
+
         .message {
-            max-width: 80%; padding: 12px 16px; border-radius: 22px;
-            font-size: 14px; line-height: 1.5; animation: popIn 0.3s ease; position: relative;
+            position: relative; padding: 12px 16px; border-radius: 22px;
+            font-size: 14px; line-height: 1.5; animation: popIn 0.3s ease;
+            background: transparent; transition: transform 0.1s ease-out; z-index: 1;
+            width: max-content; max-width: 100%;
         }
         @keyframes popIn { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-        .message.saher-sent { align-self: flex-end; background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); color: white; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(125, 92, 191, 0.2); }
-        .message.saher-received { align-self: flex-start; background: #1e1e28; color: var(--text-main); border-bottom-left-radius: 6px; border: 1px solid rgba(255,255,255,0.04); }
+        .message.saher-sent { background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); color: white; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(125, 92, 191, 0.2); }
+        .message.saher-received { background: #1e1e28; color: var(--text-main); border-bottom-left-radius: 6px; border: 1px solid rgba(255,255,255,0.04); }
+        .message.salma-sent { background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); color: white; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(219, 39, 119, 0.2); }
+        .message.salma-received { background: #1e1e28; color: var(--text-main); border-bottom-left-radius: 6px; border: 1px solid rgba(255,255,255,0.04); }
 
-        .message.salma-sent { align-self: flex-end; background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); color: white; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(219, 39, 119, 0.2); }
-        .message.salma-received { align-self: flex-start; background: #1e1e28; color: var(--text-main); border-bottom-left-radius: 6px; border: 1px solid rgba(255,255,255,0.04); }
-
-        .message-container { display: flex; flex-direction: column; max-width: 100%; }
+        .message-container { display: flex; flex-direction: column; }
         .message.saher-sent .message-container, .message.salma-sent .message-container { align-items: flex-end; }
         .message.saher-received .message-container, .message.salma-received .message-container { align-items: flex-start; }
         
         .message-text { word-wrap: break-word; padding-bottom: 2px; }
         
+        .reply-preview-box {
+            background: rgba(0,0,0,0.2); border-right: 3px solid rgba(255,255,255,0.5);
+            padding: 6px 10px; border-radius: 8px; margin-bottom: 6px; width: 100%; max-width: 100%;
+        }
+        .message.saher-received .reply-preview-box { border-right: 3px solid #9d7aea; }
+        .message.salma-received .reply-preview-box { border-right: 3px solid #f472b6; }
+        .reply-preview-sender { font-size: 11px; font-weight: 600; margin-bottom: 2px; opacity: 0.8; }
+        .reply-preview-text { font-size: 12px; opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+
         .message-meta { display: flex; align-items: center; gap: 4px; margin-top: 1px; }
         .message-meta .time { font-size: 10px; opacity: 0.6; font-weight: 400; }
-        
         .checkmark { font-size: 14px; margin-right: 2px; color: rgba(255,255,255,0.4); font-weight: bold; }
         .checkmark.read { color: #53bdeb; }
+
+        .reply-box-container {
+            background: var(--bg-card); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 10px 20px; display: none; align-items: center; gap: 15px; z-index: 2;
+            animation: slideUp 0.2s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .reply-box-container.active { display: flex; }
+        .reply-box-content { flex: 1; border-right: 3px solid #9d7aea; padding-right: 10px; }
+        .reply-box-sender { font-size: 12px; font-weight: 600; color: #9d7aea; }
+        .reply-box-text { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .reply-cancel-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 5px; }
 
         .chat-footer {
             padding: 15px 20px; background: var(--bg-card);
@@ -152,6 +187,14 @@
         
         <div id="chat-messages"></div>
 
+        <div class="reply-box-container" id="reply-box">
+            <div class="reply-box-content">
+                <div class="reply-box-sender" id="reply-box-sender">Saher</div>
+                <div class="reply-box-text" id="reply-box-text">Message</div>
+            </div>
+            <button class="reply-cancel-btn" onclick="cancelReply()">✕</button>
+        </div>
+
         <div class="chat-footer">
             <input type="text" id="msg-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
             <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
@@ -166,6 +209,7 @@
         let otherUser = '';
         let messagesRef;
         let otherUserLastRead = 0;
+        let activeReply = null;
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUh6YBeCQLva-AisywxtmOzSe_dk4uDSE",
@@ -201,6 +245,7 @@
             });
 
             loadMessages();
+            initSwipe();
         }
 
         function logout() {
@@ -218,23 +263,42 @@
                 if (data.sender !== currentUser) {
                     database.ref('lastRead/' + currentUser).set(firebase.database.ServerValue.TIMESTAMP);
                 }
-                appendMessage(data.sender, data.text, msgId, data.timestamp);
+                appendMessage(data.sender, data.text, msgId, data.timestamp, data.replyTo);
             });
         }
 
         function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+        function setReply(sender, text) {
+            activeReply = { sender, text };
+            document.getElementById('reply-box-sender').innerText = sender;
+            document.getElementById('reply-box-text').innerText = text;
+            document.getElementById('reply-box').classList.add('active');
+            document.getElementById('msg-input').focus();
+        }
+
+        function cancelReply() {
+            activeReply = null;
+            document.getElementById('reply-box').classList.remove('active');
+        }
 
         function sendMessage() {
             const input = document.getElementById('msg-input');
             const text = input.value.trim();
             if (!text) return;
 
-            messagesRef.push({
+            let payload = {
                 sender: currentUser,
                 text: text,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
+            };
 
+            if (activeReply) {
+                payload.replyTo = activeReply;
+                cancelReply();
+            }
+
+            messagesRef.push(payload);
             input.value = '';
         }
 
@@ -243,36 +307,50 @@
             return new Date(timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
         }
 
-        function appendMessage(sender, text, msgId, timestamp) {
+        function appendMessage(sender, text, msgId, timestamp, replyTo) {
             const chatBox = document.getElementById('chat-messages');
-            const div = document.createElement('div');
+            const wrapper = document.createElement('div');
             
             let msgClass = '';
+            let isSent = false;
             if (sender === 'Saher') {
                 msgClass = (currentUser === 'Saher') ? 'message saher-sent' : 'message saher-received';
+                isSent = (currentUser === 'Saher');
             } else {
                 msgClass = (currentUser === 'Salma') ? 'message salma-sent' : 'message salma-received';
+                isSent = (currentUser === 'Salma');
             }
 
-            div.className = msgClass;
-            div.dataset.id = msgId;
-            div.dataset.timestamp = timestamp;
+            wrapper.className = isSent ? 'message-wrapper sent-wrapper' : 'message-wrapper';
 
-            let isSent = msgClass.includes('sent');
             let isRead = isSent && (timestamp <= otherUserLastRead);
             let checkmarkHtml = isSent ? `<span class="checkmark ${isRead ? 'read' : ''}">${isRead ? '✓✓' : '✓'}</span>` : '';
 
-            div.innerHTML = `
-                <div class="message-container">
-                    <span class="message-text">${text}</span>
-                    <div class="message-meta">
-                        <span class="time">${formatTime(timestamp)}</span>
-                        ${checkmarkHtml}
+            let replyHtml = '';
+            if (replyTo) {
+                replyHtml = `
+                    <div class="reply-preview-box">
+                        <div class="reply-preview-sender">${replyTo.sender}</div>
+                        <div class="reply-preview-text">${replyTo.text}</div>
+                    </div>
+                `;
+            }
+
+            wrapper.innerHTML = `
+                <div class="reply-action-bg"><span>↩️</span></div>
+                <div class="${msgClass}" data-sender="${sender}" data-id="${msgId}" data-timestamp="${timestamp}">
+                    <div class="message-container">
+                        ${replyHtml}
+                        <span class="message-text">${text}</span>
+                        <div class="message-meta">
+                            <span class="time">${formatTime(timestamp)}</span>
+                            ${checkmarkHtml}
+                        </div>
                     </div>
                 </div>
             `;
             
-            chatBox.appendChild(div);
+            chatBox.appendChild(wrapper);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
@@ -291,6 +369,89 @@
                     }
                 }
             });
+        }
+
+        function initSwipe() {
+            let start_X = 0;
+            let start_Y = 0;
+            let currentWrapper = null;
+            let isDragging = false;
+            let isHorizontal = null;
+
+            const chatBox = document.getElementById('chat-messages');
+
+            function onStart(e) {
+                const target = e.target.closest('.message-wrapper');
+                if (!target) return;
+                
+                currentWrapper = target;
+                isDragging = true;
+                isHorizontal = null;
+                
+                const touch = e.touches ? e.touches[0] : e;
+                start_X = touch.clientX;
+                start_Y = touch.clientY;
+                currentWrapper.classList.remove('swiping');
+            }
+
+            function onMove(e) {
+                if (!isDragging || !currentWrapper) return;
+                
+                const touch = e.touches ? e.touches[0] : e;
+                let diffX = touch.clientX - start_X;
+                let diffY = touch.clientY - start_Y;
+
+                if (isHorizontal === null) {
+                    if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
+                        isHorizontal = Math.abs(diffX) > Math.abs(diffY);
+                        if (!isHorizontal) {
+                            isDragging = false;
+                            currentWrapper = null;
+                            return;
+                        }
+                    } else {
+                        return;
+                    }
+                }
+
+                const messageEl = currentWrapper.querySelector('.message');
+                if (diffX > 0) {
+                    messageEl.style.transform = `translateX(${Math.min(diffX, 80)}px)`;
+                    if(diffX > 20) currentWrapper.classList.add('swiping');
+                } else {
+                    messageEl.style.transform = `translateX(0)`;
+                    currentWrapper.classList.remove('swiping');
+                }
+            }
+
+            function onEnd(e) {
+                if (!isDragging || !currentWrapper) return;
+                
+                const touch = e.changedTouches ? e.changedTouches[0] : e;
+                let diffX = touch.clientX - start_X;
+                const messageEl = currentWrapper.querySelector('.message');
+                
+                if (diffX > 60) {
+                    const sender = messageEl.dataset.sender;
+                    const text = messageEl.querySelector('.message-text').innerText;
+                    setReply(sender, text);
+                }
+                
+                messageEl.style.transform = 'translateX(0)';
+                currentWrapper.classList.remove('swiping');
+                isDragging = false;
+                currentWrapper = null;
+            }
+
+            chatBox.addEventListener('touchstart', onStart, { passive: true });
+            chatBox.addEventListener('touchmove', onMove, { passive: true });
+            chatBox.addEventListener('touchend', onEnd, { passive: true });
+
+            if (!('ontouchstart' in window)) {
+                chatBox.addEventListener('mousedown', onStart);
+                window.addEventListener('mousemove', onMove);
+                window.addEventListener('mouseup', onEnd);
+            }
         }
     </script>
 </body>
