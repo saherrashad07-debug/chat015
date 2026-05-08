@@ -59,43 +59,25 @@
             padding: 20px; display: flex; align-items: center; gap: 15px;
             border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 2;
         }
-        .header-avatar {
-            width: 45px; height: 45px; border-radius: 50%;
-            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 22px;
-        }
+        .header-avatar { width: 45px; height: 45px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 22px; }
         .header-info h3 { font-size: 17px; font-weight: 600; }
         .header-info span { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; font-weight: 400;}
         .online-dot { width: 8px; height: 8px; background: #00e676; border-radius: 50%; box-shadow: 0 0 8px rgba(0, 230, 118, 0.6); }
-        
-        .logout-btn { 
-            margin-right: auto; background: none; border: 1px solid rgba(255,255,255,0.1); 
-            color: #888; padding: 8px 12px; border-radius: 12px; cursor: pointer; 
-            font-family: 'Poppins'; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; transition: 0.3s;
-        }
+        .logout-btn { margin-right: auto; background: none; border: 1px solid rgba(255,255,255,0.1); color: #888; padding: 8px 12px; border-radius: 12px; cursor: pointer; font-family: 'Poppins'; font-size: 11px; font-weight: 500; letter-spacing: 0.5px; }
         .logout-btn:active { background: rgba(255,255,255,0.05); }
 
         #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; z-index: 1; }
 
-        .message-wrapper {
-            position: relative; overflow: hidden; border-radius: 22px;
-            max-width: 80%; align-self: flex-start; touch-action: pan-y;
-        }
+        .date-separator { align-self: center; background: rgba(255,255,255,0.06); padding: 6px 16px; border-radius: 12px; font-size: 12px; color: var(--text-muted); margin: 15px 0 10px 0; font-weight: 500; letter-spacing: 0.5px; }
+
+        .message-wrapper { position: relative; overflow: hidden; border-radius: 22px; max-width: 80%; align-self: flex-start; touch-action: pan-y; }
         .message-wrapper.sent-wrapper { align-self: flex-end; }
 
-        .reply-action-bg {
-            position: absolute; top: 0; bottom: 0; left: 0; width: 100%;
-            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: flex-start;
-            padding-left: 20px; border-radius: 22px;
-        }
+        .reply-action-bg { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: flex-start; padding-left: 20px; border-radius: 22px; }
         .reply-action-bg span { font-size: 24px; opacity: 0; transition: opacity 0.1s; color: #9d7aea; }
         .message-wrapper.swiping .reply-action-bg span { opacity: 1; }
 
-        .message {
-            position: relative; padding: 12px 16px; border-radius: 22px;
-            font-size: 14px; line-height: 1.5; animation: popIn 0.3s ease;
-            background: transparent; transition: transform 0.1s ease-out; z-index: 1;
-            width: max-content; max-width: 100%;
-        }
+        .message { position: relative; padding: 12px 16px; border-radius: 22px; font-size: 14px; line-height: 1.5; animation: popIn 0.3s ease; background: transparent; transition: transform 0.1s ease-out; z-index: 1; width: max-content; max-width: 100%; }
         @keyframes popIn { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         .message.saher-sent { background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); color: white; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px rgba(125, 92, 191, 0.2); }
@@ -108,11 +90,9 @@
         .message.saher-received .message-container, .message.salma-received .message-container { align-items: flex-start; }
         
         .message-text { word-wrap: break-word; padding-bottom: 2px; }
+        .message-img { max-width: 220px; width: 100%; border-radius: 14px; margin-bottom: 4px; display: block; cursor: pointer; }
         
-        .reply-preview-box {
-            background: rgba(0,0,0,0.2); border-right: 3px solid rgba(255,255,255,0.5);
-            padding: 6px 10px; border-radius: 8px; margin-bottom: 6px; width: 100%; max-width: 100%;
-        }
+        .reply-preview-box { background: rgba(0,0,0,0.2); border-right: 3px solid rgba(255,255,255,0.5); padding: 6px 10px; border-radius: 8px; margin-bottom: 6px; width: 100%; max-width: 100%; }
         .message.saher-received .reply-preview-box { border-right: 3px solid #9d7aea; }
         .message.salma-received .reply-preview-box { border-right: 3px solid #f472b6; }
         .reply-preview-sender { font-size: 11px; font-weight: 600; margin-bottom: 2px; opacity: 0.8; }
@@ -123,11 +103,7 @@
         .checkmark { font-size: 14px; margin-right: 2px; color: rgba(255,255,255,0.4); font-weight: bold; }
         .checkmark.read { color: #53bdeb; }
 
-        .reply-box-container {
-            background: var(--bg-card); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05);
-            padding: 10px 20px; display: none; align-items: center; gap: 15px; z-index: 2;
-            animation: slideUp 0.2s ease-out;
-        }
+        .reply-box-container { background: var(--bg-card); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05); padding: 10px 20px; display: none; align-items: center; gap: 15px; z-index: 2; animation: slideUp 0.2s ease-out; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .reply-box-container.active { display: flex; }
         .reply-box-content { flex: 1; border-right: 3px solid #9d7aea; padding-right: 10px; }
@@ -135,24 +111,14 @@
         .reply-box-text { font-size: 13px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .reply-cancel-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 5px; }
 
-        .chat-footer {
-            padding: 15px 20px; background: var(--bg-card);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            display: flex; gap: 12px; align-items: center; z-index: 2;
-        }
-        .chat-footer input {
-            flex: 1; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 30px; padding: 16px 25px; color: var(--text-main); font-size: 14px; 
-            outline: none; font-family: 'Poppins', sans-serif; transition: 0.3s;
-        }
+        .chat-footer { padding: 15px 15px 15px 10px; background: var(--bg-card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 10px; align-items: center; z-index: 2; }
+        .chat-footer input { flex: 1; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; padding: 16px 25px; color: var(--text-main); font-size: 14px; outline: none; font-family: 'Poppins', sans-serif; transition: 0.3s; }
         .chat-footer input:focus { border-color: rgba(255,255,255,0.15); background: #2a2a38; }
         
-        .send-btn {
-            width: 52px; height: 52px; border-radius: 50%; border: none; color: white;
-            font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+        .attach-btn { width: 48px; height: 48px; border-radius: 50%; border: none; background: rgba(255,255,255,0.05); color: var(--text-muted); font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .attach-btn:active { background: rgba(255,255,255,0.1); transform: scale(0.9); }
+
+        .send-btn { width: 52px; height: 52px; border-radius: 50%; border: none; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .send-btn.saher-btn { background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%); }
         .send-btn.salma-btn { background: linear-gradient(135deg, #db2777 0%, #f472b6 100%); }
         .send-btn:active { transform: scale(0.92); }
@@ -196,6 +162,10 @@
         </div>
 
         <div class="chat-footer">
+            <label class="attach-btn">
+                🖼️
+                <input type="file" id="file-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+            </label>
             <input type="text" id="msg-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
             <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
         </div>
@@ -203,6 +173,7 @@
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
     <script>
         let currentUser = '';
@@ -210,6 +181,7 @@
         let messagesRef;
         let otherUserLastRead = 0;
         let activeReply = null;
+        let lastDisplayedDate = '';
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUh6YBeCQLva-AisywxtmOzSe_dk4uDSE",
@@ -223,6 +195,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        const storage = firebase.storage();
 
         function loginAs(user) {
             currentUser = user;
@@ -254,16 +227,42 @@
             document.getElementById('login-screen').classList.add('active');
             document.getElementById('chat-messages').innerHTML = '';
             document.getElementById('send-btn').className = 'send-btn';
+            lastDisplayedDate = '';
+        }
+
+        function getDateKey(timestamp) {
+            return new Date(timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function formatSeparatorDate(timestamp) {
+            const today = new Date();
+            const msgDate = new Date(timestamp);
+            if(getDateKey(today) === getDateKey(msgDate)) return "Today";
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            if(getDateKey(yesterday) === getDateKey(msgDate)) return "Yesterday";
+            return getDateKey(msgDate);
         }
 
         function loadMessages() {
             messagesRef.orderByChild('timestamp').on('child_added', (snapshot) => {
                 const data = snapshot.val();
                 const msgId = snapshot.key;
+                
                 if (data.sender !== currentUser) {
                     database.ref('lastRead/' + currentUser).set(firebase.database.ServerValue.TIMESTAMP);
                 }
-                appendMessage(data.sender, data.text, msgId, data.timestamp, data.replyTo);
+
+                const msgDateKey = getDateKey(data.timestamp);
+                if (msgDateKey !== lastDisplayedDate) {
+                    lastDisplayedDate = msgDateKey;
+                    const sep = document.createElement('div');
+                    sep.className = 'date-separator';
+                    sep.innerText = formatSeparatorDate(data.timestamp);
+                    document.getElementById('chat-messages').appendChild(sep);
+                }
+
+                appendMessage(data.sender, data.text, msgId, data.timestamp, data.replyTo, data.type);
             });
         }
 
@@ -290,6 +289,7 @@
             let payload = {
                 sender: currentUser,
                 text: text,
+                type: "text",
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             };
 
@@ -302,12 +302,54 @@
             input.value = '';
         }
 
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const input = document.getElementById('msg-input');
+            input.value = "Sending...";
+            input.disabled = true;
+
+            const fileName = Date.now() + '_' + file.name;
+            const storageRef = storage.ref('chat_images/' + fileName);
+
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed', 
+                null, 
+                (error) => { 
+                    input.value = ""; input.disabled = false; 
+                    alert("Upload failed"); 
+                }, 
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        let payload = {
+                            sender: currentUser,
+                            text: downloadURL,
+                            type: "image",
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        };
+
+                        if (activeReply) {
+                            payload.replyTo = activeReply;
+                            cancelReply();
+                        }
+
+                        messagesRef.push(payload);
+                        input.value = "";
+                        input.disabled = false;
+                        document.getElementById('file-input').value = '';
+                    });
+                }
+            );
+        }
+
         function formatTime(timestamp) {
             if(!timestamp) return '';
             return new Date(timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
         }
 
-        function appendMessage(sender, text, msgId, timestamp, replyTo) {
+        function appendMessage(sender, text, msgId, timestamp, replyTo, type) {
             const chatBox = document.getElementById('chat-messages');
             const wrapper = document.createElement('div');
             
@@ -336,12 +378,19 @@
                 `;
             }
 
+            let contentHtml = '';
+            if (type === 'image') {
+                contentHtml = `<img src="${text}" class="message-img" onclick="window.open(this.src)">`;
+            } else {
+                contentHtml = `<span class="message-text">${text}</span>`;
+            }
+
             wrapper.innerHTML = `
                 <div class="reply-action-bg"><span>↩️</span></div>
-                <div class="${msgClass}" data-sender="${sender}" data-id="${msgId}" data-timestamp="${timestamp}">
+                <div class="${msgClass}" data-sender="${sender}" data-id="${msgId}" data-timestamp="${timestamp}" data-type="${type || 'text'}">
                     <div class="message-container">
                         ${replyHtml}
-                        <span class="message-text">${text}</span>
+                        ${contentHtml}
                         <div class="message-meta">
                             <span class="time">${formatTime(timestamp)}</span>
                             ${checkmarkHtml}
@@ -433,7 +482,10 @@
                 
                 if (diffX > 60) {
                     const sender = messageEl.dataset.sender;
-                    const text = messageEl.querySelector('.message-text').innerText;
+                    let text = "[Image]";
+                    if(messageEl.dataset.type === 'text') {
+                        text = messageEl.querySelector('.message-text').innerText;
+                    }
                     setReply(sender, text);
                 }
                 
