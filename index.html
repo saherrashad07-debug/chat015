@@ -24,7 +24,7 @@
         .screen { display: none; flex-direction: column; height: 100%; }
         .screen.active { display: flex; }
 
-        #login-screen {
+        #login-screen, #password-screen {
             justify-content: center; align-items: center; padding: 20px;
             background: radial-gradient(circle at top right, #1f1f30 0%, var(--bg-main) 60%),
                         radial-gradient(circle at bottom left, #2a1525 0%, transparent 50%);
@@ -47,6 +47,26 @@
         .btn-saher:hover, .btn-saher:active { border-color: #9d7aea; box-shadow: 0 0 25px rgba(157, 122, 234, 0.15); }
         .btn-salma:hover, .btn-salma:active { border-color: #f472b6; box-shadow: 0 0 25px rgba(244, 114, 182, 0.15); }
 
+        .pwd-input-group { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
+        .pwd-input-group input {
+            flex: 1; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; padding: 18px 20px; color: var(--text-main);
+            font-size: 24px; outline: none; text-align: center; letter-spacing: 8px;
+            font-family: 'Poppins', sans-serif; transition: 0.3s;
+        }
+        .pwd-input-group input:focus { border-color: rgba(255,255,255,0.15); }
+        .pwd-input-group button {
+            background: linear-gradient(135deg, #7c5cbf 0%, #9d7aea 100%);
+            border: none; padding: 0 30px; border-radius: 16px; color: white;
+            font-weight: 600; cursor: pointer; font-family: 'Poppins'; font-size: 16px;
+            box-shadow: 0 4px 15px rgba(125, 92, 191, 0.3);
+        }
+        .pwd-input-group button:active { transform: scale(0.95); }
+        .back-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-family: 'Poppins'; font-size: 14px; text-decoration: underline; opacity: 0.7; }
+        
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25%, 75% { transform: translateX(-10px); } 50% { transform: translateX(10px); } }
+        .error-shake { animation: shake 0.4s; border-color: #ff4d4d !important; }
+
         #chat-screen { background: var(--bg-main); position: relative; }
         #chat-screen::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -67,7 +87,6 @@
         .logout-btn:active { background: rgba(255,255,255,0.05); }
 
         #chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; z-index: 1; }
-
         .date-separator { align-self: center; background: rgba(255,255,255,0.06); padding: 6px 16px; border-radius: 12px; font-size: 12px; color: var(--text-muted); margin: 15px 0 10px 0; font-weight: 500; letter-spacing: 0.5px; }
 
         .message-wrapper { position: relative; overflow: hidden; border-radius: 22px; max-width: 80%; align-self: flex-start; touch-action: pan-y; }
@@ -132,12 +151,24 @@
         <div class="login-card">
             <h1>Welcome Back 💎</h1>
             <p class="subtitle">Select your identity to continue</p>
-            <button class="user-btn btn-saher" onclick="loginAs('Saher')">
+            <button class="user-btn btn-saher" onclick="selectUser('Saher')">
                 <span class="btn-icon">🌙</span> Continue as Saher
             </button>
-            <button class="user-btn btn-salma" onclick="loginAs('Salma')">
+            <button class="user-btn btn-salma" onclick="selectUser('Salma')">
                 <span class="btn-icon">🦋</span> Continue as Salma
             </button>
+        </div>
+    </div>
+
+    <div id="password-screen" class="screen">
+        <div class="login-card">
+            <h1>Enter PIN 🔐</h1>
+            <p class="subtitle" id="pwd-subtitle">for Saher</p>
+            <div class="pwd-input-group">
+                <input type="password" id="pwd-input" placeholder="•••" maxlength="10" onkeypress="handlePwdKeyPress(event)">
+                <button onclick="submitPassword()">GO</button>
+            </div>
+            <button class="back-btn" onclick="goBackToUsers()">Back to Users</button>
         </div>
     </div>
 
@@ -178,10 +209,12 @@
     <script>
         let currentUser = '';
         let otherUser = '';
+        let selectedUser = '';
         let messagesRef;
         let otherUserLastRead = 0;
         let activeReply = null;
         let lastDisplayedDate = '';
+        const CORRECT_PWD = "123";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDUh6YBeCQLva-AisywxtmOzSe_dk4uDSE",
@@ -197,11 +230,41 @@
         const database = firebase.database();
         const storage = firebase.storage();
 
+        function selectUser(user) {
+            selectedUser = user;
+            document.getElementById('login-screen').classList.remove('active');
+            document.getElementById('password-screen').classList.add('active');
+            document.getElementById('pwd-subtitle').innerText = `for ${user}`;
+            document.getElementById('pwd-input').value = '';
+            setTimeout(() => document.getElementById('pwd-input').focus(), 300);
+        }
+
+        function goBackToUsers() {
+            document.getElementById('password-screen').classList.remove('active');
+            document.getElementById('login-screen').classList.add('active');
+        }
+
+        function handlePwdKeyPress(e) { if (e.key === 'Enter') submitPassword(); }
+
+        function submitPassword() {
+            const pwdInput = document.getElementById('pwd-input');
+            const pwd = pwdInput.value.trim();
+
+            if (pwd === CORRECT_PWD) {
+                loginAs(selectedUser);
+            } else {
+                pwdInput.classList.add('error-shake');
+                setTimeout(() => pwdInput.classList.remove('error-shake'), 400);
+                pwdInput.value = '';
+            }
+        }
+
         function loginAs(user) {
             currentUser = user;
             otherUser = (user === 'Saher') ? 'Salma' : 'Saher';
             messagesRef = database.ref('messages');
             
+            document.getElementById('password-screen').classList.remove('active');
             document.getElementById('login-screen').classList.remove('active');
             document.getElementById('chat-screen').classList.add('active');
             
@@ -230,9 +293,7 @@
             lastDisplayedDate = '';
         }
 
-        function getDateKey(timestamp) {
-            return new Date(timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        }
+        function getDateKey(timestamp) { return new Date(timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }); }
 
         function formatSeparatorDate(timestamp) {
             const today = new Date();
@@ -286,17 +347,9 @@
             const text = input.value.trim();
             if (!text) return;
 
-            let payload = {
-                sender: currentUser,
-                text: text,
-                type: "text",
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
+            let payload = { sender: currentUser, text: text, type: "text", timestamp: firebase.database.ServerValue.TIMESTAMP };
 
-            if (activeReply) {
-                payload.replyTo = activeReply;
-                cancelReply();
-            }
+            if (activeReply) { payload.replyTo = activeReply; cancelReply(); }
 
             messagesRef.push(payload);
             input.value = '';
@@ -315,26 +368,12 @@
 
             const uploadTask = storageRef.put(file);
 
-            uploadTask.on('state_changed', 
-                null, 
-                (error) => { 
-                    input.value = ""; input.disabled = false; 
-                    alert("Upload failed"); 
-                }, 
+            uploadTask.on('state_changed', null, 
+                (error) => { input.value = ""; input.disabled = false; alert("Upload failed"); }, 
                 () => {
                     uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        let payload = {
-                            sender: currentUser,
-                            text: downloadURL,
-                            type: "image",
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        };
-
-                        if (activeReply) {
-                            payload.replyTo = activeReply;
-                            cancelReply();
-                        }
-
+                        let payload = { sender: currentUser, text: downloadURL, type: "image", timestamp: firebase.database.ServerValue.TIMESTAMP };
+                        if (activeReply) { payload.replyTo = activeReply; cancelReply(); }
                         messagesRef.push(payload);
                         input.value = "";
                         input.disabled = false;
@@ -370,12 +409,7 @@
 
             let replyHtml = '';
             if (replyTo) {
-                replyHtml = `
-                    <div class="reply-preview-box">
-                        <div class="reply-preview-sender">${replyTo.sender}</div>
-                        <div class="reply-preview-text">${replyTo.text}</div>
-                    </div>
-                `;
+                replyHtml = `<div class="reply-preview-box"><div class="reply-preview-sender">${replyTo.sender}</div><div class="reply-preview-text">${replyTo.text}</div></div>`;
             }
 
             let contentHtml = '';
@@ -432,11 +466,9 @@
             function onStart(e) {
                 const target = e.target.closest('.message-wrapper');
                 if (!target) return;
-                
                 currentWrapper = target;
                 isDragging = true;
                 isHorizontal = null;
-                
                 const touch = e.touches ? e.touches[0] : e;
                 start_X = touch.clientX;
                 start_Y = touch.clientY;
@@ -445,7 +477,6 @@
 
             function onMove(e) {
                 if (!isDragging || !currentWrapper) return;
-                
                 const touch = e.touches ? e.touches[0] : e;
                 let diffX = touch.clientX - start_X;
                 let diffY = touch.clientY - start_Y;
@@ -453,14 +484,8 @@
                 if (isHorizontal === null) {
                     if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
                         isHorizontal = Math.abs(diffX) > Math.abs(diffY);
-                        if (!isHorizontal) {
-                            isDragging = false;
-                            currentWrapper = null;
-                            return;
-                        }
-                    } else {
-                        return;
-                    }
+                        if (!isHorizontal) { isDragging = false; currentWrapper = null; return; }
+                    } else { return; }
                 }
 
                 const messageEl = currentWrapper.querySelector('.message');
@@ -475,7 +500,6 @@
 
             function onEnd(e) {
                 if (!isDragging || !currentWrapper) return;
-                
                 const touch = e.changedTouches ? e.changedTouches[0] : e;
                 let diffX = touch.clientX - start_X;
                 const messageEl = currentWrapper.querySelector('.message');
@@ -483,9 +507,7 @@
                 if (diffX > 60) {
                     const sender = messageEl.dataset.sender;
                     let text = "[Image]";
-                    if(messageEl.dataset.type === 'text') {
-                        text = messageEl.querySelector('.message-text').innerText;
-                    }
+                    if(messageEl.dataset.type === 'text') { text = messageEl.querySelector('.message-text').innerText; }
                     setReply(sender, text);
                 }
                 
